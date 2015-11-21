@@ -5,7 +5,17 @@
     <title>D3: Scaled scatterplot, resized to be bigger!</title>
       <script type="text/javascript" src="http://d3js.org/d3.v3.min.js"></script>
     <style type="text/css">
-      /* No style rules here yet */   
+      .axis path,
+      .axis line {
+          fill: none;
+          stroke: black;
+          shape-rendering: crispEdges;
+      }
+
+      .axis text {
+          font-family: sans-serif;
+          font-size: 11px;
+      }
     </style>
   </head>
   <body>
@@ -14,7 +24,7 @@
       //Width and height
       var w = 500;
       var h = 300;
-      var padding = 20;
+      var padding = 30;
       
       var dataset = [
               [5, 20], [480, 90], [250, 50], [100, 33], [330, 95],
@@ -34,13 +44,26 @@
       var rScale = d3.scale.linear()
                  .domain([0, d3.max(dataset, function(d) { return d[1]; })])
                  .range([2, 5]);
-  
+
+      //axises             
+      var xAxis = d3.svg.axis()
+                  .scale(xScale)
+                  .orient("bottom")
+                  .ticks(5);  //Set rough # of ticks;
+
+      //Define Y axis
+      var yAxis = d3.svg.axis()
+                        .scale(yScale)
+                        .orient("left")
+                        .ticks(5);
+      
       //Create SVG element
       var svg = d3.select("body")
             .append("svg")
             .attr("width", w)
             .attr("height", h);
 
+      //create curckes      
       svg.selectAll("circle")
          .data(dataset)
          .enter()
@@ -55,6 +78,7 @@
             return rScale(d[1]);
          });
 
+      //create labels
       svg.selectAll("text")
          .data(dataset)
          .enter()
@@ -71,6 +95,18 @@
          .attr("font-family", "sans-serif")
          .attr("font-size", "11px")
          .attr("fill", "red");
+
+         //Create X axis
+         svg.append("g")
+          .attr("class", "axis") //Assign "axis" class
+          .attr("transform", "translate(0," + (h - padding) + ")")
+          .call(xAxis);
+
+          //Create Y axis
+          svg.append("g")
+              .attr("class", "axis")
+              .attr("transform", "translate(" + padding + ",0)")
+              .call(yAxis);
       
     </script>
   </body>
